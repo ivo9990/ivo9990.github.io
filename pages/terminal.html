@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>larpterm</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css" />
+    <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.js"></script>
+    <style>
+        body {
+            background-color: #000;
+            margin: 0;
+            padding: 20px;
+            font-family: monospace;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+        #terminal-container {
+            width: 100%;
+            height: 100%;
+            background: #000;
+            border-radius: 0px;
+            overflow: hidden;
+        }
+
+    .xterm-viewport::-webkit-scrollbar {
+        display: none;
+    }
+    .xterm-viewport {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    </style>
+</head>
+<body>
+
+    <div id="terminal-container"></div>
+
+    <script>
+        const fileSystem = {
+            "root": {
+                "home": {
+                    "you": {
+                        "readme.txt": "explore the file system, find secrets (no arg, me no mate)",
+                        "todo.md": "- install nyarch\n - larp nso\n - touch grass"
+                    }
+                },
+                "var": {
+                    "log": {
+                        "syslog": "syste status: nothing is working\n lmao\n skill issue"
+                    }
+                },
+                "bin": {
+                    "systemd": "L larp",
+                    "dinit": "dininit 🫰❌0️⃣0️⃣0️⃣🫵😂",
+                    "xterm": "this is made with xterm.js",
+                    "busybox": "i am command",
+                    "nixos-rebuild": "W larp",
+                    "larp": "larp lord v67.41",
+                    "bash": "i am you",
+                    "grace": "litany 9999999999999999999999999999999999999999999999999",
+                    "gentoo": "he was boiling shit in a kettle, like actual shit"
+                }
+            }
+        };
+
+        let currentPath = ["root", "home", "you"];
+        let currentInput = "";
+
+        function getPathString() {
+            if (currentPath.length === 1 && currentPath[0] === "root") return "/";
+            return "/" + currentPath.slice(1).join("/");
+        }
+
+        function getPrompt() {
+            return `\r\n\x1b[1;32myou@larplinux\x1b[0m:\x1b[1;34m${getPathString()}\x1b[0m$ `;
+        }
+
+        function getDirectory(pathArray) {
+            let current = fileSystem;
+            for (const dir of pathArray) {
+                if (current[dir] && typeof current[dir] === 'object') {
+                    current = current[dir];
+                } else {
+                    return null;
+                }
+            }
+            return current;
+        }
+
+
+        const term = new Terminal({
+            cursorBlink: true,
+            fontFamily: 'Courier New, Courier, monospace',
+            fontSize: 16,
+            theme: {
+                background: '#000',
+                foreground: '#fff'
+            }
+        });
+
+        term.open(document.getElementById('terminal-container'));
+        
+        const c = {
+        reset:  "\x1b[0m",
+        white:  "\x1b[37m",
+        red:    "\x1b[38;5;203m",
+        green:  "\x1b[38;5;114m",
+        yellow: "\x1b[38;5;221m",
+        blue:   "\x1b[38;5;74m",
+        purple: "\x1b[38;5;176m",
+        cyan:   "\x1b[38;5;73m",
+        dimG:   "\x1b[38;5;65m"
+    };
+
+        term.writeln(`${c.white}\x1b[1myou@larplinux${c.reset}`);
+    
+
+    term.writeln(`${c.red}os${c.reset}       larp linux x86_64`);
+    term.writeln(`${c.green}kernel${c.reset}   Linux 7.1.5-200.x86_64`);
+    term.writeln(`${c.yellow}host${c.reset}     eMachines eTower 566ID `);
+    term.writeln(`${c.blue}pkgs${c.reset}     10 (dpkg)`);
+    term.writeln(`${c.purple}uptime${c.reset}   61y 42d 2h 1m 23s`);
+    term.writeln(`${c.cyan}memory${c.reset}   0.15 GiB / 3.85 GiB (${c.dimG}4%${c.reset})`);
+        term.writeln("\x1b[1;33mhelp\x1b[0m for help");
+        term.write(getPrompt());
+
+        function handleCommand(commandLine) {
+            const args = commandLine.trim().split(/\s+/);
+            const cmd = args[0].toLowerCase();
+            const target = args[1];
+
+            if (!cmd) return;
+
+            const currentDir = getDirectory(currentPath);
+
+            switch (cmd) {
+                case 'help':
+                    term.writeln("\r\navailable commands:");
+                    term.writeln("  help             - help");
+                    term.writeln("  ls               - list directory contents");
+                    term.writeln("  cd [dir]         - change directory (supports '..' and '/')");
+                    term.writeln("  cat [file]       - display file contents");
+                    term.writeln("  mkdir [name]     - create a directory");
+                    term.writeln("  touch [name]     - create an empty file");
+                    term.writeln("  pwd              - print working directory");
+                    term.writeln("  clear            - clear the screen");
+                    term.writeln("  echo [text]      - print text to the terminal");
+                    term.writeln("  ????      - ????");
+                    break;
+
+                case 'clear':
+                    term.clear();
+                    break;
+
+                case 'pwd':
+                    term.writeln(`\r\n${getPathString()}`);
+                    break;
+
+                case 'echo':
+                    const text = args.slice(1).join(" ");
+                    term.writeln(`\r\n${text}`);
+                    break;
+
+                case 'ls':
+                    term.writeln("");
+                    const keys = Object.keys(currentDir);
+                    if (keys.length === 0) break;
+                    
+                    keys.forEach(key => {
+                        if (typeof currentDir[key] === 'object') {
+                            term.write(`\x1b[1;34m${key}/\x1b[0m   `);
+                        } else {
+                            term.write(`${key}   `);
+                        }
+                    });
+                    term.writeln("");
+                    break;
+
+                case 'cd':
+                    if (!target || target === "~") {
+                        currentPath = ["root", "home", "user"];
+                    } else if (target === "/") {
+                        currentPath = ["root"];
+                    } else if (target === "..") {
+                        if (currentPath.length > 1) currentPath.pop();
+                    } else {
+                        if (currentDir[target] && typeof currentDir[target] === 'object') {
+                            currentPath.push(target);
+                        } else {
+                            term.writeln(`\r\ncd: no such file or directory: ${target}`);
+                        }
+                    }
+                    break;
+
+                case 'cat':
+                    if (!target) {
+                        term.writeln("\r\nUsage: cat [filename]");
+                    } else if (currentDir[target] !== undefined) {
+                        if (typeof currentDir[target] === 'object') {
+                            term.writeln(`\r\ncat: ${target}: Is a directory`);
+                        } else {
+                            const lines = currentDir[target].split('\n');
+                            term.writeln("");
+                            lines.forEach(line => term.writeln(line));
+                        }
+                    } else {
+                        term.writeln(`\r\ncat: ${target}: No such file or directory`);
+                    }
+                    break;
+
+                case 'mkdir':
+                    if (!target) {
+                        term.writeln("\r\nUsage: mkdir [directory_name]");
+                    } else if (currentDir[target]) {
+                        term.writeln(`\r\nmkdir: ${target}: File or directory exists`);
+                    } else {
+                        currentDir[target] = {};
+                        term.writeln(`\r\nCreated directory: ${target}`);
+                    }
+                    break;
+
+                case 'touch':
+                    if (!target) {
+                        term.writeln("\r\nUsage: touch [filename]");
+                    } else if (currentDir[target]) {
+                        term.writeln(`\r\nUpdated timestamp for ${target}`);
+                    } else {
+                        currentDir[target] = "";
+                        term.writeln(`\r\nCreated file: ${target}`);
+                    }
+                    break;
+
+                //copy mate cus funny lmao lolololololol
+                case 'mate':
+                    term.writeln(`\r\nking larp`);
+                    break;
+                
+
+                default:
+                    term.writeln(`\r\ncommand not found: ${cmd}`);
+                    break;
+
+            }
+        }
+
+
+        term.onData(e => {
+            switch (e) {
+                case '\r':
+                    handleCommand(currentInput);
+                    currentInput = "";
+                    term.write(getPrompt());
+                    break;
+                case '\u007F':
+                case '\b':
+                    if (currentInput.length > 0) {
+                        currentInput = currentInput.slice(0, -1);
+                        term.write('\b \b');
+                    }
+                    break;
+                default: 
+                    if (e >= String.fromCharCode(0x20) && e <= String.fromCharCode(0x7E)) {
+                        currentInput += e;
+                        term.write(e);
+                    }
+                    break;
+            }
+        });
+    </script>
+</body>
+</html>

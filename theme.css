@@ -1,0 +1,118 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+
+:root {
+    --bg-color: #000;
+    --tui-green: #16c60c;
+    --tui-blue: #61d6d6;
+    --tui-text: #ffffff;
+    --tui-muted: #aaaaaa;
+    --tui-alert: #e74856;
+}
+
+/* Global resets for the game container */
+html, body {
+    margin: 0;
+    padding: 12px;
+    background-color: var(--bg-color);
+    color: var(--tui-text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    box-sizing: border-box;
+}
+
+/* TUI Style Headings */
+h1, h2, h3, h4 {
+    color: var(--tui-blue);
+    font-weight: 700;
+    margin-top: 0;
+}
+
+h1::before, h2::before {
+    color: var(--tui-green);
+}
+
+/* Custom Text-Based UI Borders & Panels */
+.tui-panel {
+    border: 1px dashed var(--tui-muted);
+    padding: 12px;
+    margin-bottom: 16px;
+    background: rgba(0, 0, 0, 0.15);
+}
+
+/* Retro TUI Keyboard Buttons / Clickables */
+button, .tui-btn {
+    background: transparent;
+    color: var(--bg-color);
+    background-color: var(--tui-text);
+    border: 1px solid var(--tui-text);
+    font-family: 'JetBrains Mono', monospace;
+    padding: 6px 14px;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+button:hover, .tui-btn:hover {
+    background-color: var(--tui-green);
+    border-color: var(--tui-green);
+    color: var(--bg-color);
+}
+
+button:active, .tui-btn:active {
+    background-color: var(--tui-blue);
+    border-color: var(--tui-blue);
+}
+
+/* TUI Input fields / Forms */
+input[type="text"], input[type="number"], select, textarea {
+    background: transparent;
+    color: var(--tui-blue);
+    border: 1px solid var(--tui-muted);
+    font-family: 'JetBrains Mono', monospace;
+    padding: 6px 10px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+input[type="text"]:focus, input[type="number"]:focus, select:focus {
+    border-color: var(--tui-blue);
+    border-style: dashed;
+}
+
+/* Matrix Code Highlights */
+code, pre {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--tui-green);
+    background: rgba(0, 0, 0, 0.3);
+    padding: 2px 6px;
+    border-radius: 3px;
+}
+
+/* Custom Terminal Scrollbars */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-color);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--tui-muted);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--tui-blue);
+}
+
+/* Add to your terminal.html or about.html style block */
+body {
+    scrollbar-width: none;
+    overflow: hidden; 
+}
+body::-webkit-scrollbar {
+    display: none;
+    overflow: hidden; 
+}
